@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="MergeScope v1.4.5 功能规则、模块影响、回归重点与源码测试索引。支持离线查阅和搜索。">
+<title>MergeScope · 功能与测试知识库</title>
+<style>
+:root{color-scheme:light;--ink:#19283b;--muted:#5e6f80;--line:#dce4eb;--paper:#f4f7fa;--blue:#155dd0}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.85}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}:focus-visible{outline:3px solid #337ef0;outline-offset:4px}.skip{position:absolute;left:12px;top:-80px;background:white;padding:10px;z-index:5}.skip:focus{top:12px}.layout{display:grid;grid-template-columns:268px minmax(0,1fr);max-width:1600px;margin:auto}.sidebar{height:100vh;position:sticky;top:0;background:#fff;border-right:1px solid var(--line);padding:32px 22px;overflow:auto}.brand{font-size:25px;font-weight:750;letter-spacing:-1px}.brand span{color:var(--blue)}.eyebrow{color:var(--blue);letter-spacing:2px;font-size:11px;font-weight:700;text-transform:uppercase}.side-sub{color:var(--muted);font-size:13px;margin:2px 0 25px}.nav-label{font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}.sidebar nav a{display:block;color:#41546a;padding:8px 10px;border-radius:7px;font-size:13px;line-height:1.5;margin:3px 0}.sidebar nav a:hover{background:#eef4ff;color:var(--blue);text-decoration:none}.side-note{margin-top:28px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:12px}.main{min-width:0;padding:42px clamp(22px,4vw,66px) 60px}.hero{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:25px}.hero h1{font-size:clamp(29px,3vw,43px);line-height:1.25;letter-spacing:-1px;margin:12px 0 15px}.hero p{max-width:750px;color:var(--muted);margin:0}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}.badge{background:#e8f0fd;color:#225599;padding:4px 11px;border-radius:5px;font-size:12px}.badge.neutral{background:#e8edf1;color:#4d6175}.notice{border-left:3px solid #d39d32;background:#fff8e7;padding:14px 18px;border-radius:0 7px 7px 0;font-size:13px;color:#6d5526;margin-bottom:26px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;align-items:end}.field{display:flex;flex-direction:column;gap:5px}.field:first-child{flex:1;min-width:200px}label{font-size:12px;color:var(--muted)}input,select{border:1px solid #cbd6e1;border-radius:7px;background:white;color:var(--ink);padding:10px 12px;min-height:46px;max-width:100%}button,.download{border:1px solid #cbd6e1;border-radius:7px;background:white;color:var(--ink);padding:10px 14px;cursor:pointer;min-height:46px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}button:hover,.download:hover{background:#eaf1fb;text-decoration:none}.result{font-size:12px;color:var(--muted);margin:12px 0 23px}.cards{display:grid;gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:25px 29px;scroll-margin-top:24px}.card-head{display:flex;justify-content:space-between;gap:14px;align-items:start;border-bottom:1px solid #edf0f4;padding-bottom:15px;margin-bottom:16px}.card h2{font-size:20px;line-height:1.5;margin:0}.category{font-size:11px;letter-spacing:1px;color:var(--muted);margin-bottom:4px}.priority{font-size:12px;font-weight:700;border-radius:5px;padding:3px 10px;background:#fff0ed;color:#aa4837;white-space:nowrap}.priority.p1{background:#edf2fc;color:#456394}.card ul{padding-left:20px;margin:0}.card li{padding-left:4px;margin:10px 0;overflow-wrap:anywhere}.card li:last-child{color:#526b82;font-size:13px}.empty{border:1px dashed #aab9ca;border-radius:12px;padding:40px;text-align:center;color:var(--muted)}[hidden]{display:none!important}footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:30px;padding-top:18px}.hint{font-size:12px;color:var(--muted)}@media(min-width:1500px){.main{padding-right:80px}}@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{height:auto;position:static;border-right:0;border-bottom:1px solid var(--line);padding:20px 24px}.side-sub{margin-bottom:10px}.sidebar nav{display:flex;gap:5px;overflow:auto}.sidebar nav a{white-space:nowrap}.nav-label,.side-note{display:none}.main{padding-top:28px}}@media(max-width:480px){.main{padding:24px 16px}.card{padding:19px 17px}.hero h1{font-size:30px}.toolbar{gap:9px}.field:first-child{min-width:100%;width:100%}.card h2{font-size:18px}.meta{gap:6px}.download,button{flex:1}.field{min-width:0;flex:1}}@media print{body{background:white;font-size:11px}.layout{display:block}.sidebar,.toolbar,.result,.notice,.hint,.empty,.skip{display:none}.main{padding:0}.hero{margin-bottom:18px;padding-bottom:15px}.hero h1{font-size:27px}.card{break-inside:auto;border:0;border-top:1px solid #ccc;border-radius:0;padding:16px 0}.card-head{break-after:avoid}.card li{break-inside:avoid;margin:5px 0}.cards{gap:0}a{color:inherit}}
+</style></head><body>
+<a class="skip" href="#content">跳到知识正文</a><div class="layout">
+<aside class="sidebar"><div class="brand">Merge<span>Scope</span></div><p class="side-sub">功能与测试知识库</p><div class="nav-label">KNOWLEDGE INDEX</div><nav aria-label="知识章节"><a href="#section-1">01 产品边界与核心链路</a><a href="#section-2">02 订阅、检查点与任务队列</a><a href="#section-3">03 平台接口与仓库令牌隔离</a><a href="#section-4">04 仓库知识来源与版本追溯</a><a href="#section-5">05 规则分析、风险与 Markdown 导出</a><a href="#section-6">06 AI 模型设置与补充分析</a><a href="#section-7">07 邮件服务与发送状态</a><a href="#section-8">08 报告容量、归档与回收站</a><a href="#section-9">09 工作台、页面路由与阅读状态</a><a href="#section-10">10 数据安全与验证边界</a><a href="#section-11">11 变更影响分析与回归使用方法</a><a href="#section-12">12 来源、更新与当前覆盖缺口</a></nav><div class="side-note">基于当前本地代码整理<br>v1.4.5 · 2026.11.13<br><br>规则、源码与测试入口可追溯。实际执行结果单独记录。</div></aside>
+<main class="main" id="content"><header class="hero"><div class="eyebrow">Product / Rules / Regression</div><h1>让每次变更，有据可查。</h1><p>从订阅发现到报告归档，集中查阅 MergeScope 的功能边界、关键规则、异常处理和回归入口，为代码影响分析与测试设计提供共同依据。</p><div class="meta"><span class="badge">本地代码 v1.4.5</span><span class="badge neutral">12 个知识章节</span><span class="badge neutral">离线可用</span><span class="badge neutral">更新于 2026-11-13</span></div></header>
+<div class="notice"><strong>使用边界</strong>　本文为知识整理与回归设计依据；测试文件存在不代表已执行通过。工作区内容可能与远端、发布 ZIP 或已安装扩展不同。</div>
+<section aria-label="搜索和筛选"><div class="toolbar"><div class="field"><label for="search">搜索知识、规则或源码路径</label><input id="search" type="search" placeholder="例如：未读、令牌、归档、provider" autocomplete="off"></div><div class="field"><label for="category">知识分类</label><select id="category"><option value="">全部分类</option><option>总览</option><option>后台流程</option><option>平台与权限</option><option>分析能力</option><option>邮件与归档</option><option>界面与数据</option><option>使用与维护</option></select></div><button id="reset" type="button">重置</button><button id="print" type="button">打印 / PDF</button><a class="download" href="mergescope-knowledge.md" download>下载导入文本 ↓</a></div><p class="hint">本地导入请选择同目录的 Markdown 文件；HTML 可直接双击查阅。打印保留当前筛选，打印全部前请重置。</p><p class="result" id="result" role="status" aria-live="polite">显示全部 12 个章节</p></section>
+<div class="cards"><article class="card" id="section-1" data-category="总览"><div class="card-head"><div><div class="category">总览 · MS-OVERVIEW</div><h2>01 产品边界与核心链路</h2></div><span class="priority p0">P0</span></div><ul><li>产品：Chrome / Edge Manifest V3 扩展，支持 GitHub.com、GitLab.com 与 HTTPS 自建 GitLab；当前不支持自建 GitHub Enterprise。</li>
+<li>核心链路：保存订阅 → 读取已合并 PR/MR 或默认分支新提交 → 持久化任务 → 读取真实差异与知识 → 规则分析 → 可选 AI 补充 → 保存报告 → 可选邮件发送 → 阅读与容量归档。</li>
+<li>手动入口：真实 commit、PR/MR 地址和仓库首页；仓库首页读取默认分支最新提交，独立分支需指定 commit 地址。</li>
+<li>浏览器关闭、系统休眠时不承诺运行；约一分钟是调度间隔，恢复后补查，不能当作实时送达 SLA。</li>
+<li>分析不会执行测试或修改目标仓库；报告风险是回归优先级建议。页面勾选不构成持久化执行记录。</li>
+<li>P0 回归：真实记录从发现到保存仅生成预期报告；AI、邮件或知识读取失败时分别核对规则报告、队列和错误状态。</li>
+<li>来源：README.md；extension/manifest.json；extension/background.js。</li>
+<li>验证入口：tests/commit-scan.test.js；scripts/browser-smoke.mjs。</li></ul></article>
+<article class="card" id="section-2" data-category="后台流程"><div class="card-head"><div><div class="category">后台流程 · MS-QUEUE</div><h2>02 订阅、检查点与任务队列</h2></div><span class="priority p0">P0</span></div><ul><li>最多订阅 20 个仓库；PR/MR 从首次保存时间跟踪。默认分支首次检查只分析最新提交并建立 SHA 检查点，不生成全部历史。</li>
+<li>后续按旧 SHA 找出新进入默认分支的提交，较早提交先排队；实时分支引用固定查询快照，绕过 API 缓存。</li>
+<li>单仓库扫描上限 1000 条，超限或历史不一致需报错，不能当作无更新；历史强推或默认分支变化导致旧检查点失效时，提示并从最新位置跟踪。</li>
+<li>每次最多处理 2 个任务，队列、检查点与去重信息本机持久化。观察到新提交不代表报告已成功生成。</li>
+<li>失败退避重试，累计失败达到 5 次停止自动重试；立即重试允许手动尝试一次，不重置失败额度。暂停仓库不能立即重试。</li>
+<li>暂停后恢复补查；编辑订阅不重置检查时间；移除订阅清除对应等待任务，历史报告保留。</li>
+<li>P0 回归：首次订阅、一次 push 多提交、重复检查、重启恢复、最新报告缺失补建、5 次失败、手动重试、暂停和强推历史。</li>
+<li>观察点：完整 SHA、报告 ID、队列条数、累计失败数、下次重试时间、检查位置；不要只看“检查成功”提示。</li>
+<li>来源：extension/background.js；extension/provider.js；extension/core.js。</li>
+<li>验证入口：tests/commit-scan.test.js；tests/queue-retry.test.js；tests/provider.test.js；scripts/queue-retry-smoke.mjs。</li></ul></article>
+<article class="card" id="section-3" data-category="平台与权限"><div class="card-head"><div><div class="category">平台与权限 · MS-PROVIDER</div><h2>03 平台接口与仓库令牌隔离</h2></div><span class="priority p0">P0</span></div><ul><li>GitHub 令牌按仓库保存；专用令牌优先。未配置时兼容旧站点令牌；显式清除仓库令牌同时阻止该仓库旧站点回退，不影响其他仓库。GitLab 按站点保存。</li>
+<li>GitHub 建议目标仓库 Contents 与 Pull requests 只读权限；GitLab 使用 read_api。配置已保存不代表平台授权已验证。</li>
+<li>仓库“测试访问”分别检查仓库信息、PR/MR 列表和默认分支提交；错误应注明接口和是否携带令牌，不回显令牌或原始响应正文。</li>
+<li>分页读取文件，保留重命名前后路径、删除状态、缺失与截断 diff 提示；固定真实提交 SHA 的知识快照。</li>
+<li>GitLab MR /diffs 遇 404、405、500、502、503、504 时仅尝试一次 /changes；401、403、429 不走该兼容路径。备用失败需明确两次错误，结果不能与先前分页重复拼接。</li>
+<li>P0 回归：A/B 仓库令牌互不覆盖、留空保留、清除与回退隔离、知识仓库对应令牌、错误脱敏、权限拒绝、分页及真实 SHA。</li>
+<li>P1 回归：GitLab 嵌套项目编码、重命名、二进制与截断、备用接口 overflow 风险提示。</li>
+<li>来源：extension/provider.js；extension/repo-token.js；extension/background.js。</li>
+<li>验证入口：tests/provider.test.js；tests/repo-token.test.js；scripts/repo-token-smoke.mjs。</li></ul></article>
+<article class="card" id="section-4" data-category="分析能力"><div class="card-head"><div><div class="category">分析能力 · MS-KNOWLEDGE</div><h2>04 仓库知识来源与版本追溯</h2></div><span class="priority p0">P0</span></div><ul><li>每仓库最多 8 个来源。Git 来源每项 1–10 个相对文档路径，可固定分支、标签或 SHA；知识仓库版本独立于被分析代码版本。</li>
+<li>本地文件夹支持 MD、MDX、TXT、JSON、YAML、CSV、RST、ADOC；每来源最多 50 份文本，每份最多 16000 字符，仓库本地文本合计最多 1 MB。跳过 .git、node_modules、锁文件及不支持格式。</li>
+<li>本地 HTML 不在支持格式内。本页配套 mergescope-knowledge.md 可通过本地文件夹导入；HTML 供离线查阅。若以网页来源读取 HTML，需自行提供最终 HTTPS 地址。</li>
+<li>网页来源不携带登录 Cookie，不运行脚本，不跟随重定向，响应最多 1 MB，提取正文最多保留 16000 字符；依赖登录或动态脚本的正文不保证可读取。</li>
+<li>预览不等于保存；新增、移除、编辑均需保存知识库。取消或 Esc 在有草稿时提示；编辑来源更新原条目，未应用编辑时阻止直接保存。</li>
+<li>普通文档提供摘录与可选 AI 参考；只有有效 .merge-impact.json 可补充规则模块。优先级：手工覆盖 &gt; 目标仓库知识 &gt; 附加结构化知识 &gt; 内置路径规则。</li>
+<li>同名模块以目标仓库为准；附加来源之间后者优先。依赖不完整或配置无效要警告，不能无声猜测模块关系。</li>
+<li>P0 回归：仓库隔离、预览与保存差异、编辑不重复、未保存退出、权限撤销、无效 JSON、超限、固定版本和失败降级。</li>
+<li>来源：extension/knowledge-sources.js；extension/dashboard.js；extension/provider.js。</li>
+<li>验证入口：tests/knowledge-sources.test.js；tests/knowledge-background.test.js；scripts/browser-smoke.mjs。</li></ul></article>
+<article class="card" id="section-5" data-category="分析能力"><div class="card-head"><div><div class="category">分析能力 · MS-ANALYSIS</div><h2>05 规则分析、风险与 Markdown 导出</h2></div><span class="priority p0">P0</span></div><ul><li>模块通过 paths 匹配文件，支持 *、**、?；重命名同时匹配新旧路径。</li>
+<li>dependsOn 表示本模块依赖其他模块；依赖项变化传播到调用模块，不能反向扩大。循环依赖必须安全终止。</li>
+<li>critical 模块受影响提升为高风险；内置规则识别数据库迁移、认证权限、支付订单、接口契约、依赖构建、共享模块和界面交互。</li>
+<li>tests 和 testFocus 是已知测试入口与建议，规则引擎不执行命令，也不自动理解普通文档的业务语义。</li>
+<li>导出包含标题、原始链接、风险、知识来源与快照、直接/间接影响路径、测试重点、待确认、文档摘录和可选 AI 正文。</li>
+<li>无模块知识、未匹配文件、缺失或截断 diff 必须标明。无命中不能解释成业务无风险。</li>
+<li>P0 回归：依赖传播方向、循环、重命名、删除、未知文件、关键模块、非法依赖；核对页面与导出中的边界一致。</li>
+<li>来源：extension/core.js；extension/dashboard.js。</li>
+<li>验证入口：tests/core.test.js；scripts/browser-smoke.mjs。</li></ul></article>
+<article class="card" id="section-6" data-category="分析能力"><div class="card-head"><div><div class="category">分析能力 · MS-AI</div><h2>06 AI 模型设置与补充分析</h2></div><span class="priority p0">P0</span></div><ul><li>AI 默认关闭；启用后向已配置 HTTPS Chat Completions 兼容服务发送标题、描述、项目知识和部分 diff。AI 失败仍保留规则报告。</li>
+<li>同一接口与模型更新原配置，不同组合保存为多项；每项 Key 与连接测试状态独立。新模型不继承其他模型 Key，修改或清除 Key 后旧测试结果失效。</li>
+<li>单次最多前 80 个变更文件，每个 diff 最多 6000 字符；每文档最多 8000 字符，总提示数据最多约 110000 字符。长文档靠后部分可能未参与分析。</li>
+<li>正文要求不超过 2000 字、最多 8 条重点场景，按 P0/P1/P2 提供前置、操作、预期和依据；不能据此声称完整覆盖所有用例。</li>
+<li>分析输出上限 8192 token，连接测试 512 token，使用非流式 JSON。仅推理无正文、空响应、拒绝和错误格式分别报错。</li>
+<li>截断但已有最终正文时保留部分内容，页面、边界和导出标注未完成；连接测试仍拒绝截断结果。不自动续写或重试。</li>
+<li>P0 回归：停用时无 AI 请求、模型 Key 隔离、异常降级、部分正文标记、推理不能充当报告、文档截断提示与敏感信息边界。</li>
+<li>来源：extension/background.js；extension/ai-response.js；extension/dashboard.js。</li>
+<li>验证入口：tests/ai-models.test.js；tests/ai-response.test.js；scripts/browser-smoke.mjs。</li></ul></article>
+<article class="card" id="section-7" data-category="邮件与归档"><div class="card-head"><div><div class="category">邮件与归档 · MS-MAIL</div><h2>07 邮件服务与发送状态</h2></div><span class="priority p0">P0</span></div><ul><li>扩展通过本机 Node.js 邮件服务发送，原生启动桥接可启动并复用后台服务；启动成功应完成健康检查并保存连接密钥。</li>
+<li>本机连接密钥与 SMTP 授权码用途不同；密钥不允许空白、换行、中文或全角说明。设置卡片不展示密钥和授权码原文。</li>
+<li>自动发信由开关控制；手动补发可重试；发送失败保留报告。配置卡片显示已保存配置，编辑草稿不改变卡片。</li>
+<li>收件人按逗号、分号或空白拆分去重，启用配置支持 1–20 个有效收件人；失败按认证、DNS、连接、TLS、地址和内容拒绝分类脱敏展示。</li>
+<li>SMTP 全部收件人接受才记 sent；部分拒绝记 partial；SMTP 接受不等于最终投递。结果未确认的重试可能重复投递。</li>
+<li>系统 DNS 解析动态地址，保留原 SMTP 域名做 TLS SNI 与证书校验；不能用关闭证书校验作为正常修复。</li>
+<li>P0 回归：错误密钥、授权失败、网络超时、部分拒绝、失败保留报告、重复补发、草稿与已保存配置区别、凭据脱敏。</li>
+<li>来源：extension/mail.js；scripts/mail-service.mjs；scripts/mail-native-host.mjs；scripts/install-mail-native.mjs。</li>
+<li>验证入口：tests/mail.test.js；tests/mail-native.test.js。真实 SMTP 连接、授权投递与收件箱送达需要分层验证。</li></ul></article>
+<article class="card" id="section-8" data-category="邮件与归档"><div class="card-head"><div><div class="category">邮件与归档 · MS-RETENTION</div><h2>08 报告容量、归档与回收站</h2></div><span class="priority p0">P0</span></div><ul><li>活跃分析报告保留最新 50 条，按生成时间从最早记录腾位。新分析前先确保容量，不能直接截断丢失未发正文。</li>
+<li>已发送报告移入已归档，只保留标题、生成时间、原链接和邮件状态；已归档不保留报告正文。</li>
+<li>最早未发送报告移出前自动发送，最多累计尝试 5 次，每次发送前持久化次数，重启不重置；此发送不受普通自动发送开关控制。</li>
+<li>五次未成功则完整存入未归档。未归档最多 10 个，支持查看、导出、补发归档和确认删除；达到上限且下一份仍未发送时阻止腾位与新分析。</li>
+<li>未归档满额仍允许已发送记录归档。存储失败不得提前发送，归档写入失败应保留完整报告。</li>
+<li>归档邮件主题使用原报告 createdAt 和完整仓库名，时间为北京时间；重试仍用同一生成时间，邮件状态记录实际发送时间。</li>
+<li>P0 回归：49/50/51 边界、未归档 9/10 边界、成功提前停止、部分拒绝、后台中断、存储失败、补发及删除后的恢复。</li>
+<li>来源：extension/report-retention.js；extension/background.js；extension/mail.js。</li>
+<li>验证入口：tests/report-retention.test.js；tests/mail.test.js。</li></ul></article>
+<article class="card" id="section-9" data-category="界面与数据"><div class="card-head"><div><div class="category">界面与数据 · MS-UI</div><h2>09 工作台、页面路由与阅读状态</h2></div><span class="priority p1">P1</span></div><ul><li>五个独立视图：分析工作台、仓库订阅、AI 分析设置、邮箱报告设置、分析报告回收站。支持地址直达、刷新、前进后退和菜单高亮；切换保留未保存输入。</li>
+<li>报告可按仓库筛选，默认全部；未订阅仓库归入单次分析记录。桌面详情独立滚动，同报告刷新保留位置，切换报告回顶部。</li>
+<li>新报告和重新分析生成的报告默认为未读；当前活动工作台真正展示详情后自动已读。后台标签页、设置页、弹窗期间不应标读。</li>
+<li>旧历史无阅读字段初始化已读。未读数量仅统计活跃分析报告，归档不计入；0 隐藏角标，启动恢复，归档移出后更新。</li>
+<li>旧页面的标读请求不能覆盖重新生成报告的阅读状态；用报告 ID 和 createdAt 区分新旧实例。</li>
+<li>P0 回归：未读生成、已读幂等、后台不标读、重分析竞态、归档后角标和重启恢复。</li>
+<li>P1 回归：五页切换与深链、表单草稿、仓库筛选、窄屏滚动、键盘关闭队列及清晰空态。</li>
+<li>来源：extension/dashboard.js；extension/dashboard.html；extension/style.css；extension/background.js。</li>
+<li>验证入口：tests/report-read.test.js；scripts/report-filter-smoke.mjs；scripts/browser-smoke.mjs。文件存在不代表每项 UI 场景均已有自动断言。</li></ul></article>
+<article class="card" id="section-10" data-category="界面与数据"><div class="card-head"><div><div class="category">界面与数据 · MS-SAFETY</div><h2>10 数据安全与验证边界</h2></div><span class="priority p0">P0</span></div><ul><li>令牌、Key 与设置存于本机 chrome.storage.local，不同步账号，但不是系统凭据保险库；卸载扩展会删除本地数据。</li>
+<li>仓库文档、标题、diff、网页和邮件错误属于不可信数据；以文本展示，不执行其中脚本、指令或命令。导出不能包含凭据。</li>
+<li>报告状态需区分规则分析完成、AI 输出完整、SMTP 接受、实际送达、测试通过和发布验收；这些结论不能互相替代。</li>
+<li>本知识库的自动化入口是验证线索。本次制作不代表真实平台全链路、真实邮件或插件发布已经验证。</li>
+<li>P0 回归：跨仓库泄露、错误正文泄露、脚本注入、无授权外发、凭据回显、存储失败导致报告丢失。</li>
+<li>来源：extension/background.js；extension/dashboard.js；extension/knowledge-sources.js；extension/mail.js；README.md。</li>
+<li>验证入口：tests/repo-token.test.js；tests/knowledge-sources.test.js；tests/mail.test.js；scripts/browser-smoke.mjs。</li></ul></article>
+<article class="card" id="section-11" data-category="使用与维护"><div class="card-head"><div><div class="category">使用与维护 · MS-WORKFLOW</div><h2>11 变更影响分析与回归使用方法</h2></div><span class="priority p1">P1</span></div><ul><li>先固定仓库、目标提交 SHA、版本和变更文件，再定位对应知识编号；记录直接修改模块及配置依赖产生的间接影响。</li>
+<li>修改 provider 或 repo-token：重点回归平台读取、订阅扫描、手动分析及知识仓库令牌隔离；修改 core：重点回归影响分析、导出及邮件正文。</li>
+<li>修改 background：重点回归持久化队列、报告生成、AI 降级、邮件、容量归档和未读角标；共享文件变化不能只测试新按钮。</li>
+<li>修改 mail 或 retention：重点核对发送状态、重复投递、重试预算、容量阻塞及完整报告保留；修改 dashboard：重点检查五视图、草稿、筛选、标读与导出。</li>
+<li>每条建议给出：实际行为变化、业务后果、依据路径、关联测试文件、建议操作和可观察预期。无 diff 支持的内容标为潜在风险，不当作已确认影响。</li>
+<li>测试结果记录环境、版本、输入、实际结果与证据；未执行保持未执行。业务风险和证据完整程度分别判断。</li>
+<li>常用入口：npm test（Node 测试）；npm run check（扩展语法与资源）；npm run test:browser（模拟 API 的真实浏览器扩展检查）；npm run pack（打包）。运行打包不等于发布。</li></ul></article>
+<article class="card" id="section-12" data-category="使用与维护"><div class="card-head"><div><div class="category">使用与维护 · MS-SOURCES</div><h2>12 来源、更新与当前覆盖缺口</h2></div><span class="priority p1">P1</span></div><ul><li>依据：README.md、extension/manifest.json（1.4.5）及各章列出的源码与测试入口。</li>
+<li>本地工作区存在既有未提交修改，本页基于当前文件整理，不代表远端版本、已安装扩展版本或发布 ZIP 已与之同步。</li>
+<li>当前根目录 .merge-impact.json 尚未分别建模仓库令牌、附加知识、AI 解析、邮件与归档等独立模块；本页提供人工和 AI 参考，不会自动新增结构化依赖图。</li>
+<li>当前分析没有专门的用例 ID 映射或自动生成执行结果能力；前述报告优化建议尚不能当作现有功能。</li>
+<li>更新条件：版本、业务规则、限制、源码入口或测试断言改变时同步更新本文件，并运行构建命令 node scripts/build-mergescope-knowledge.mjs 重新生成 HTML。</li>
+<li>HTML 的正文是静态内容，搜索只影响查阅；离线运行无外部脚本、字体、模型调用或网络请求。可打印或另存 PDF。</li>
+<li>本地导入：仓库订阅 → 目标仓库知识库 → 本地文件夹 → 选择本目录 → 读取预览 → 确认 Markdown 正文 → 保存知识库。导入的是快照，文档更新后需重新导入。</li></ul></article></div><div class="empty" id="empty" hidden>未找到匹配章节。试试其他关键词，或重置筛选。</div>
+<footer>MergeScope Knowledge Base · 本地静态文档 · 无外部依赖<br>来源与更新方法见第 12 章。知识快照更新后，需要重新导入插件。</footer></main></div>
+<script>
+const search=document.getElementById('search'),category=document.getElementById('category'),cards=[...document.querySelectorAll('.card')];
+function filter(){const words=search.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);let count=0;for(const card of cards){const match=(!category.value||category.value===card.dataset.category)&&words.every(word=>card.textContent.toLocaleLowerCase().includes(word));card.hidden=!match;if(match)count++;}document.getElementById('result').textContent='显示 '+count+' / '+cards.length+' 个章节';document.getElementById('empty').hidden=count>0;}
+search.addEventListener('input',filter);category.addEventListener('change',filter);document.getElementById('reset').addEventListener('click',()=>{search.value='';category.value='';filter();search.focus();});document.getElementById('print').addEventListener('click',()=>window.print());document.querySelectorAll('nav a').forEach(link=>link.addEventListener('click',()=>{search.value='';category.value='';filter();}));
+</script></body></html>

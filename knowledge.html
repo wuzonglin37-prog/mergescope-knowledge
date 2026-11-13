@@ -1,0 +1,130 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;line-height:1.85;max-width:960px;margin:40px auto;padding:0 24px;color:#19283b}h2{margin-top:36px;border-bottom:1px solid #dce4eb;padding-bottom:10px}p{overflow-wrap:anywhere}</style></head><body><h1>MergeScope 功能与测试知识库</h1>
+<p>基线：本地代码 v1.4.5。整理日期：2026-11-13（Asia/Shanghai）。适用对象：MergeScope 插件的需求理解、变更影响分析与回归设计。</p>
+<p>依据当前说明、代码与测试整理，不代表已执行通过。真实平台、SMTP 和环境兼容性需独立验证；P0/P1/P2 为建议测试优先级。</p>
+<h2>01 产品边界与核心链路</h2>
+<p>分类：总览。优先级：P0。知识编号：MS-OVERVIEW。</p>
+<p>产品：Chrome / Edge Manifest V3 扩展，支持 GitHub.com、GitLab.com 与 HTTPS 自建 GitLab；当前不支持自建 GitHub Enterprise。</p>
+<p>核心链路：保存订阅 → 读取已合并 PR/MR 或默认分支新提交 → 持久化任务 → 读取真实差异与知识 → 规则分析 → 可选 AI 补充 → 保存报告 → 可选邮件发送 → 阅读与容量归档。</p>
+<p>手动入口：真实 commit、PR/MR 地址和仓库首页；仓库首页读取默认分支最新提交，独立分支需指定 commit 地址。</p>
+<p>浏览器关闭、系统休眠时不承诺运行；约一分钟是调度间隔，恢复后补查，不能当作实时送达 SLA。</p>
+<p>分析不会执行测试或修改目标仓库；报告风险是回归优先级建议。页面勾选不构成持久化执行记录。</p>
+<p>P0 回归：真实记录从发现到保存仅生成预期报告；AI、邮件或知识读取失败时分别核对规则报告、队列和错误状态。</p>
+<p>来源：README.md；extension/manifest.json；extension/background.js。</p>
+<p>验证入口：tests/commit-scan.test.js；scripts/browser-smoke.mjs。</p>
+<h2>02 订阅、检查点与任务队列</h2>
+<p>分类：后台流程。优先级：P0。知识编号：MS-QUEUE。</p>
+<p>最多订阅 20 个仓库；PR/MR 从首次保存时间跟踪。默认分支首次检查只分析最新提交并建立 SHA 检查点，不生成全部历史。</p>
+<p>后续按旧 SHA 找出新进入默认分支的提交，较早提交先排队；实时分支引用固定查询快照，绕过 API 缓存。</p>
+<p>单仓库扫描上限 1000 条，超限或历史不一致需报错，不能当作无更新；历史强推或默认分支变化导致旧检查点失效时，提示并从最新位置跟踪。</p>
+<p>每次最多处理 2 个任务，队列、检查点与去重信息本机持久化。观察到新提交不代表报告已成功生成。</p>
+<p>失败退避重试，累计失败达到 5 次停止自动重试；立即重试允许手动尝试一次，不重置失败额度。暂停仓库不能立即重试。</p>
+<p>暂停后恢复补查；编辑订阅不重置检查时间；移除订阅清除对应等待任务，历史报告保留。</p>
+<p>P0 回归：首次订阅、一次 push 多提交、重复检查、重启恢复、最新报告缺失补建、5 次失败、手动重试、暂停和强推历史。</p>
+<p>观察点：完整 SHA、报告 ID、队列条数、累计失败数、下次重试时间、检查位置；不要只看“检查成功”提示。</p>
+<p>来源：extension/background.js；extension/provider.js；extension/core.js。</p>
+<p>验证入口：tests/commit-scan.test.js；tests/queue-retry.test.js；tests/provider.test.js；scripts/queue-retry-smoke.mjs。</p>
+<h2>03 平台接口与仓库令牌隔离</h2>
+<p>分类：平台与权限。优先级：P0。知识编号：MS-PROVIDER。</p>
+<p>GitHub 令牌按仓库保存；专用令牌优先。未配置时兼容旧站点令牌；显式清除仓库令牌同时阻止该仓库旧站点回退，不影响其他仓库。GitLab 按站点保存。</p>
+<p>GitHub 建议目标仓库 Contents 与 Pull requests 只读权限；GitLab 使用 read_api。配置已保存不代表平台授权已验证。</p>
+<p>仓库“测试访问”分别检查仓库信息、PR/MR 列表和默认分支提交；错误应注明接口和是否携带令牌，不回显令牌或原始响应正文。</p>
+<p>分页读取文件，保留重命名前后路径、删除状态、缺失与截断 diff 提示；固定真实提交 SHA 的知识快照。</p>
+<p>GitLab MR /diffs 遇 404、405、500、502、503、504 时仅尝试一次 /changes；401、403、429 不走该兼容路径。备用失败需明确两次错误，结果不能与先前分页重复拼接。</p>
+<p>P0 回归：A/B 仓库令牌互不覆盖、留空保留、清除与回退隔离、知识仓库对应令牌、错误脱敏、权限拒绝、分页及真实 SHA。</p>
+<p>P1 回归：GitLab 嵌套项目编码、重命名、二进制与截断、备用接口 overflow 风险提示。</p>
+<p>来源：extension/provider.js；extension/repo-token.js；extension/background.js。</p>
+<p>验证入口：tests/provider.test.js；tests/repo-token.test.js；scripts/repo-token-smoke.mjs。</p>
+<h2>04 仓库知识来源与版本追溯</h2>
+<p>分类：分析能力。优先级：P0。知识编号：MS-KNOWLEDGE。</p>
+<p>每仓库最多 8 个来源。Git 来源每项 1–10 个相对文档路径，可固定分支、标签或 SHA；知识仓库版本独立于被分析代码版本。</p>
+<p>本地文件夹支持 MD、MDX、TXT、JSON、YAML、CSV、RST、ADOC；每来源最多 50 份文本，每份最多 16000 字符，仓库本地文本合计最多 1 MB。跳过 .git、node_modules、锁文件及不支持格式。</p>
+<p>本地 HTML 不在支持格式内。本页配套 mergescope-knowledge.md 可通过本地文件夹导入；HTML 供离线查阅。若以网页来源读取 HTML，需自行提供最终 HTTPS 地址。</p>
+<p>网页来源不携带登录 Cookie，不运行脚本，不跟随重定向，响应最多 1 MB，提取正文最多保留 16000 字符；依赖登录或动态脚本的正文不保证可读取。</p>
+<p>预览不等于保存；新增、移除、编辑均需保存知识库。取消或 Esc 在有草稿时提示；编辑来源更新原条目，未应用编辑时阻止直接保存。</p>
+<p>普通文档提供摘录与可选 AI 参考；只有有效 .merge-impact.json 可补充规则模块。优先级：手工覆盖 &gt; 目标仓库知识 &gt; 附加结构化知识 &gt; 内置路径规则。</p>
+<p>同名模块以目标仓库为准；附加来源之间后者优先。依赖不完整或配置无效要警告，不能无声猜测模块关系。</p>
+<p>P0 回归：仓库隔离、预览与保存差异、编辑不重复、未保存退出、权限撤销、无效 JSON、超限、固定版本和失败降级。</p>
+<p>来源：extension/knowledge-sources.js；extension/dashboard.js；extension/provider.js。</p>
+<p>验证入口：tests/knowledge-sources.test.js；tests/knowledge-background.test.js；scripts/browser-smoke.mjs。</p>
+<h2>05 规则分析、风险与 Markdown 导出</h2>
+<p>分类：分析能力。优先级：P0。知识编号：MS-ANALYSIS。</p>
+<p>模块通过 paths 匹配文件，支持 *、**、?；重命名同时匹配新旧路径。</p>
+<p>dependsOn 表示本模块依赖其他模块；依赖项变化传播到调用模块，不能反向扩大。循环依赖必须安全终止。</p>
+<p>critical 模块受影响提升为高风险；内置规则识别数据库迁移、认证权限、支付订单、接口契约、依赖构建、共享模块和界面交互。</p>
+<p>tests 和 testFocus 是已知测试入口与建议，规则引擎不执行命令，也不自动理解普通文档的业务语义。</p>
+<p>导出包含标题、原始链接、风险、知识来源与快照、直接/间接影响路径、测试重点、待确认、文档摘录和可选 AI 正文。</p>
+<p>无模块知识、未匹配文件、缺失或截断 diff 必须标明。无命中不能解释成业务无风险。</p>
+<p>P0 回归：依赖传播方向、循环、重命名、删除、未知文件、关键模块、非法依赖；核对页面与导出中的边界一致。</p>
+<p>来源：extension/core.js；extension/dashboard.js。</p>
+<p>验证入口：tests/core.test.js；scripts/browser-smoke.mjs。</p>
+<h2>06 AI 模型设置与补充分析</h2>
+<p>分类：分析能力。优先级：P0。知识编号：MS-AI。</p>
+<p>AI 默认关闭；启用后向已配置 HTTPS Chat Completions 兼容服务发送标题、描述、项目知识和部分 diff。AI 失败仍保留规则报告。</p>
+<p>同一接口与模型更新原配置，不同组合保存为多项；每项 Key 与连接测试状态独立。新模型不继承其他模型 Key，修改或清除 Key 后旧测试结果失效。</p>
+<p>单次最多前 80 个变更文件，每个 diff 最多 6000 字符；每文档最多 8000 字符，总提示数据最多约 110000 字符。长文档靠后部分可能未参与分析。</p>
+<p>正文要求不超过 2000 字、最多 8 条重点场景，按 P0/P1/P2 提供前置、操作、预期和依据；不能据此声称完整覆盖所有用例。</p>
+<p>分析输出上限 8192 token，连接测试 512 token，使用非流式 JSON。仅推理无正文、空响应、拒绝和错误格式分别报错。</p>
+<p>截断但已有最终正文时保留部分内容，页面、边界和导出标注未完成；连接测试仍拒绝截断结果。不自动续写或重试。</p>
+<p>P0 回归：停用时无 AI 请求、模型 Key 隔离、异常降级、部分正文标记、推理不能充当报告、文档截断提示与敏感信息边界。</p>
+<p>来源：extension/background.js；extension/ai-response.js；extension/dashboard.js。</p>
+<p>验证入口：tests/ai-models.test.js；tests/ai-response.test.js；scripts/browser-smoke.mjs。</p>
+<h2>07 邮件服务与发送状态</h2>
+<p>分类：邮件与归档。优先级：P0。知识编号：MS-MAIL。</p>
+<p>扩展通过本机 Node.js 邮件服务发送，原生启动桥接可启动并复用后台服务；启动成功应完成健康检查并保存连接密钥。</p>
+<p>本机连接密钥与 SMTP 授权码用途不同；密钥不允许空白、换行、中文或全角说明。设置卡片不展示密钥和授权码原文。</p>
+<p>自动发信由开关控制；手动补发可重试；发送失败保留报告。配置卡片显示已保存配置，编辑草稿不改变卡片。</p>
+<p>收件人按逗号、分号或空白拆分去重，启用配置支持 1–20 个有效收件人；失败按认证、DNS、连接、TLS、地址和内容拒绝分类脱敏展示。</p>
+<p>SMTP 全部收件人接受才记 sent；部分拒绝记 partial；SMTP 接受不等于最终投递。结果未确认的重试可能重复投递。</p>
+<p>系统 DNS 解析动态地址，保留原 SMTP 域名做 TLS SNI 与证书校验；不能用关闭证书校验作为正常修复。</p>
+<p>P0 回归：错误密钥、授权失败、网络超时、部分拒绝、失败保留报告、重复补发、草稿与已保存配置区别、凭据脱敏。</p>
+<p>来源：extension/mail.js；scripts/mail-service.mjs；scripts/mail-native-host.mjs；scripts/install-mail-native.mjs。</p>
+<p>验证入口：tests/mail.test.js；tests/mail-native.test.js。真实 SMTP 连接、授权投递与收件箱送达需要分层验证。</p>
+<h2>08 报告容量、归档与回收站</h2>
+<p>分类：邮件与归档。优先级：P0。知识编号：MS-RETENTION。</p>
+<p>活跃分析报告保留最新 50 条，按生成时间从最早记录腾位。新分析前先确保容量，不能直接截断丢失未发正文。</p>
+<p>已发送报告移入已归档，只保留标题、生成时间、原链接和邮件状态；已归档不保留报告正文。</p>
+<p>最早未发送报告移出前自动发送，最多累计尝试 5 次，每次发送前持久化次数，重启不重置；此发送不受普通自动发送开关控制。</p>
+<p>五次未成功则完整存入未归档。未归档最多 10 个，支持查看、导出、补发归档和确认删除；达到上限且下一份仍未发送时阻止腾位与新分析。</p>
+<p>未归档满额仍允许已发送记录归档。存储失败不得提前发送，归档写入失败应保留完整报告。</p>
+<p>归档邮件主题使用原报告 createdAt 和完整仓库名，时间为北京时间；重试仍用同一生成时间，邮件状态记录实际发送时间。</p>
+<p>P0 回归：49/50/51 边界、未归档 9/10 边界、成功提前停止、部分拒绝、后台中断、存储失败、补发及删除后的恢复。</p>
+<p>来源：extension/report-retention.js；extension/background.js；extension/mail.js。</p>
+<p>验证入口：tests/report-retention.test.js；tests/mail.test.js。</p>
+<h2>09 工作台、页面路由与阅读状态</h2>
+<p>分类：界面与数据。优先级：P1。知识编号：MS-UI。</p>
+<p>五个独立视图：分析工作台、仓库订阅、AI 分析设置、邮箱报告设置、分析报告回收站。支持地址直达、刷新、前进后退和菜单高亮；切换保留未保存输入。</p>
+<p>报告可按仓库筛选，默认全部；未订阅仓库归入单次分析记录。桌面详情独立滚动，同报告刷新保留位置，切换报告回顶部。</p>
+<p>新报告和重新分析生成的报告默认为未读；当前活动工作台真正展示详情后自动已读。后台标签页、设置页、弹窗期间不应标读。</p>
+<p>旧历史无阅读字段初始化已读。未读数量仅统计活跃分析报告，归档不计入；0 隐藏角标，启动恢复，归档移出后更新。</p>
+<p>旧页面的标读请求不能覆盖重新生成报告的阅读状态；用报告 ID 和 createdAt 区分新旧实例。</p>
+<p>P0 回归：未读生成、已读幂等、后台不标读、重分析竞态、归档后角标和重启恢复。</p>
+<p>P1 回归：五页切换与深链、表单草稿、仓库筛选、窄屏滚动、键盘关闭队列及清晰空态。</p>
+<p>来源：extension/dashboard.js；extension/dashboard.html；extension/style.css；extension/background.js。</p>
+<p>验证入口：tests/report-read.test.js；scripts/report-filter-smoke.mjs；scripts/browser-smoke.mjs。文件存在不代表每项 UI 场景均已有自动断言。</p>
+<h2>10 数据安全与验证边界</h2>
+<p>分类：界面与数据。优先级：P0。知识编号：MS-SAFETY。</p>
+<p>令牌、Key 与设置存于本机 chrome.storage.local，不同步账号，但不是系统凭据保险库；卸载扩展会删除本地数据。</p>
+<p>仓库文档、标题、diff、网页和邮件错误属于不可信数据；以文本展示，不执行其中脚本、指令或命令。导出不能包含凭据。</p>
+<p>报告状态需区分规则分析完成、AI 输出完整、SMTP 接受、实际送达、测试通过和发布验收；这些结论不能互相替代。</p>
+<p>本知识库的自动化入口是验证线索。本次制作不代表真实平台全链路、真实邮件或插件发布已经验证。</p>
+<p>P0 回归：跨仓库泄露、错误正文泄露、脚本注入、无授权外发、凭据回显、存储失败导致报告丢失。</p>
+<p>来源：extension/background.js；extension/dashboard.js；extension/knowledge-sources.js；extension/mail.js；README.md。</p>
+<p>验证入口：tests/repo-token.test.js；tests/knowledge-sources.test.js；tests/mail.test.js；scripts/browser-smoke.mjs。</p>
+<h2>11 变更影响分析与回归使用方法</h2>
+<p>分类：使用与维护。优先级：P1。知识编号：MS-WORKFLOW。</p>
+<p>先固定仓库、目标提交 SHA、版本和变更文件，再定位对应知识编号；记录直接修改模块及配置依赖产生的间接影响。</p>
+<p>修改 provider 或 repo-token：重点回归平台读取、订阅扫描、手动分析及知识仓库令牌隔离；修改 core：重点回归影响分析、导出及邮件正文。</p>
+<p>修改 background：重点回归持久化队列、报告生成、AI 降级、邮件、容量归档和未读角标；共享文件变化不能只测试新按钮。</p>
+<p>修改 mail 或 retention：重点核对发送状态、重复投递、重试预算、容量阻塞及完整报告保留；修改 dashboard：重点检查五视图、草稿、筛选、标读与导出。</p>
+<p>每条建议给出：实际行为变化、业务后果、依据路径、关联测试文件、建议操作和可观察预期。无 diff 支持的内容标为潜在风险，不当作已确认影响。</p>
+<p>测试结果记录环境、版本、输入、实际结果与证据；未执行保持未执行。业务风险和证据完整程度分别判断。</p>
+<p>常用入口：npm test（Node 测试）；npm run check（扩展语法与资源）；npm run test:browser（模拟 API 的真实浏览器扩展检查）；npm run pack（打包）。运行打包不等于发布。</p>
+<h2>12 来源、更新与当前覆盖缺口</h2>
+<p>分类：使用与维护。优先级：P1。知识编号：MS-SOURCES。</p>
+<p>依据：README.md、extension/manifest.json（1.4.5）及各章列出的源码与测试入口。</p>
+<p>本地工作区存在既有未提交修改，本页基于当前文件整理，不代表远端版本、已安装扩展版本或发布 ZIP 已与之同步。</p>
+<p>当前根目录 .merge-impact.json 尚未分别建模仓库令牌、附加知识、AI 解析、邮件与归档等独立模块；本页提供人工和 AI 参考，不会自动新增结构化依赖图。</p>
+<p>当前分析没有专门的用例 ID 映射或自动生成执行结果能力；前述报告优化建议尚不能当作现有功能。</p>
+<p>更新条件：版本、业务规则、限制、源码入口或测试断言改变时同步更新本文件，并运行构建命令 node scripts/build-mergescope-knowledge.mjs 重新生成 HTML。</p>
+<p>HTML 的正文是静态内容，搜索只影响查阅；离线运行无外部脚本、字体、模型调用或网络请求。可打印或另存 PDF。</p>
+<p>本地导入：仓库订阅 → 目标仓库知识库 → 本地文件夹 → 选择本目录 → 读取预览 → 确认 Markdown 正文 → 保存知识库。导入的是快照，文档更新后需重新导入。</p></body></html>
